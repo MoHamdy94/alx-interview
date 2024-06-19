@@ -15,15 +15,18 @@ status_codes_count = {
 }
 line_count = 0
 
+
 def print_statistics():
     print(f"File size: {total_size}")
     for code in sorted(status_codes_count.keys()):
         if status_codes_count[code] > 0:
             print(f"{code}: {status_codes_count[code]}")
 
+
 def handle_interrupt(signal, frame):
     print_statistics()
     sys.exit(0)
+
 
 signal.signal(signal.SIGINT, handle_interrupt)
 
