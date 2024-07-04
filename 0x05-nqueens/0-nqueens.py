@@ -1,61 +1,59 @@
 #!/usr/bin/python3
-"""N Queens placement on NxN chessboard"""
-
-
+""" DOC """
 import sys
 
 
-def generate_solutions(row, column):
-    solution = [[]]
-    for queen in range(row):
-        solution = place_queen(queen, column, solution)
-    return solution
+def solve_queens_problem(board_size):
+    """ DOC """
+
+    def is_valid_position(pos, occupied_pos):
+        """ DOC """
+        for i in range(len(occupied_pos)):
+            if (
+                occupied_pos[i] == pos or
+                occupied_pos[i] - i == pos - len(occupied_pos) or
+                occupied_pos[i] + i == pos + len(occupied_pos)
+            ):
+                return False
+        return True
+
+    def place_queens(board_size, index, occupied_pos, solutions):
+        """ DOC """
+        if index == board_size:
+            solutions.append(occupied_pos[:])
+            return
+
+        for i in range(board_size):
+            if is_valid_position(i, occupied_pos):
+                occupied_pos.append(i)
+                place_queens(board_size, index + 1, occupied_pos, solutions)
+                occupied_pos.pop()
+
+    solutions = []
+    place_queens(board_size, 0, [], solutions)
+    return solutions
 
 
-def place_queen(queen, column, prev_solution):
-    safe_position = []
-    for array in prev_solution:
-        for x in range(column):
-            if is_safe(queen, x, array):
-                safe_position.append(array + [x])
-    return safe_position
-
-
-def is_safe(q, x, array):
-    if x in array:
-        return (False)
-    else:
-        return all(abs(array[column] - x) != q - column
-                   for column in range(q))
-
-
-def init():
+def main():
+    """ DOC """
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
-    if sys.argv[1].isdigit():
-        n = int(sys.argv[1])
-    else:
+
+    try:
+        board_size = int(sys.argv[1])
+    except ValueError:
         print("N must be a number")
         sys.exit(1)
-    if n < 4:
+
+    if board_size < 4:
         print("N must be at least 4")
         sys.exit(1)
-    return (n)
+
+    solutions = solve_queens_problem(board_size)
+    for solution in solutions:
+        print([[i, solution[i]] for i in range(len(solution))])
 
 
-def n_queens():
-
-    n = init()
-    # generate all solutions
-    solutions = generate_solutions(n, n)
-    # print solutions
-    for array in solutions:
-        clean = []
-        for q, x in enumerate(array):
-            clean.append([q, x])
-        print(clean)
-
-
-if __name__ == '__main__':
-    n_queens()
+if __name__ == "__main__":
+    main()
